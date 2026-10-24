@@ -6,6 +6,10 @@ Diagnóstico integral del servicio RappiPlus en el primer semestre de 2025: cali
 
 [Ver el notebook](analisis_rappiplus.ipynb) · [Abrir en Google Colab](https://colab.research.google.com/github/fvt1999pipe-eng/analisis_rappiplus/blob/main/analisis_rappiplus.ipynb) · [Descargar el dashboard (.pbix)](dashboard_rappiplus.pbix)
 
+## Contexto y objetivo
+
+RappiPlus es un servicio de delivery con operación en varios países de Latinoamérica. La dirección quería saber si el negocio gana dinero, en qué punto de la compra se pierden los usuarios y si vuelven, antes de decidir dónde invertir. El objetivo es responder esas preguntas con datos limpios y convertir cada respuesta en una recomendación concreta.
+
 ## Preguntas de negocio
 
 1. ¿Podemos confiar en los datos?
@@ -25,6 +29,15 @@ Diagnóstico integral del servicio RappiPlus en el primer semestre de 2025: cali
 | Experimento A/B del checkout | Tratamiento 16,29 % frente a control 15,69 % (+0,60 puntos). z = 0,813; p = 0,416: no significativo. | No implementar la nueva interfaz esperando más ventas y enfocar el próximo experimento en el paso de pago. |
 | Dashboard | 4.528 pedidos (18,2 %) se venden por debajo del costo; el 98 % se concentra en Jacket-Winter-M, Laptop-Gaming-16GB y Blender-XL-Red. Laptop-Gaming-16GB pierde USD 93.622 antes de marketing. | Fijar un precio mínimo por producto que cubra su costo. |
 
+## Metodología
+
+1. **Calidad de los datos (Python, pandas):** revisión de duplicados, nulos, valores inválidos y atípicos; recuperación de categorías y canales de marketing mal escritos; cálculo de revenue y costo por pedido cruzando con el catálogo.
+2. **Rentabilidad:** revenue, costo de productos, gasto en marketing y profit, con el retorno de cada canal de marketing y país.
+3. **Funnel de conversión (SQL):** usuarios únicos en cada etapa de eventos, desde la primera visita hasta la compra, y pérdida entre pasos consecutivos.
+4. **Retención por cohortes (SQL):** cohortes por mes de registro y porcentaje de usuarios activos en las semanas 1 a 4 después del registro.
+5. **Experimento A/B (statsmodels):** prueba Z de dos proporciones entre control y tratamiento, con un nivel de significancia de 0,05.
+6. **Dashboard (Power BI):** modelo estrella, medidas DAX y validación de los totales contra los calculados en Python.
+
 ## Dashboard en Power BI
 
 ![Página Overview del dashboard: KPIs, revenue y profit mensual, acumulado del año y revenue por categoría](img/overview.png)
@@ -41,6 +54,13 @@ El dashboard tiene tres páginas: **Overview** (visión ejecutiva), **Detalle** 
 - **Medidas DAX:** Revenue, Costo Total (`SUMX` con `RELATED`), Gasto Marketing, Ganancia Bruta, Profit, Margen, Ticket Promedio, Cantidad Promedio, Revenue y Profit YTD (`TOTALYTD`) y Pedidos con Pérdida.
 - Los totales del modelo coinciden con los calculados en Python.
 
+### Limitaciones
+
+- El periodo cubre solo el primer semestre de 2025, así que no captura la estacionalidad de un año completo.
+- El profit descuenta el costo de productos y el marketing; el dataset no incluye otros costos operativos como logística o plataforma.
+- Que el experimento no sea significativo no prueba que la nueva interfaz no tenga efecto: con una diferencia de 0,6 puntos, detectarla exigiría una muestra mayor.
+- El funnel y las cohortes miden actividad de los usuarios, no el ingreso que genera cada uno.
+
 ## Datos
 
 | Fuente | Contenido |
@@ -51,7 +71,7 @@ El dashboard tiene tres páginas: **Overview** (visión ejecutiva), **Detalle** 
 | Tablas `events`, `users` y `user_activity` | Comportamiento de los usuarios en la plataforma (PostgreSQL) |
 | `experiment_checkout_ui.csv` | 10.000 usuarios de un experimento A/B sobre la interfaz del checkout |
 
-Los datos son un caso de estudio del bootcamp de Análisis de Datos de TripleTen. La base de datos SQL del caso no es pública: las credenciales se leen de variables de entorno y no se incluyen en el repositorio.
+Los datos son un caso de estudio ficticio del bootcamp de Análisis de Datos de TripleTen: no corresponden a cifras reales de ninguna empresa. La base de datos SQL del caso no es pública: las credenciales se leen de variables de entorno y no se incluyen en el repositorio.
 
 ## Estructura del repositorio
 
